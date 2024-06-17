@@ -4,15 +4,21 @@ import os
 from scipy.interpolate import interp2d
 from dotenv import load_dotenv
 import requests
+from json import load as load_json
 
 correction_data = pd.read_csv('correction.csv')
 load_dotenv()
+f = open("elevations.json")
+elevations = load_json(f)
+f.close()
 weather_key = os.environ.get('WEATHER_KEY')
 temperatures = correction_data['temperature_C'].values
 altitudes = correction_data.columns[1:].astype(float)
 corrections = correction_data.iloc[:, 1:].values
 interp_function = interp2d(altitudes, temperatures, corrections, kind='linear')
 
+def get_airport_alt(airport_code):
+    return(elevations[airport_code])
 def temp_parser(data):
     return (data["data"][0]["temperature"]["celsius"])
 
